@@ -28,12 +28,13 @@ struct TikTokQuotesFeed: View {
     @State private var randomizedQuotes: [Quote] = []
     @State private var usedIndices: Set<Int> = []
     @StateObject private var backgroundThemeViewModel = BackgroundThemeViewModel()
+    @StateObject private var musicPlayerViewModel = MusicPlayerViewModel()
     
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 0) {
                 ForEach(Array(randomizedQuotes.enumerated()), id: \.element.id) { index, quote in
-                    QuotePage(quote: quote, backgroundThemeViewModel: backgroundThemeViewModel)
+                    QuotePage(quote: quote, backgroundThemeViewModel: backgroundThemeViewModel, musicPlayerViewModel: musicPlayerViewModel)
                         .id("\(quote.id)-\(index)")
                         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
                         .onAppear {
@@ -75,6 +76,7 @@ struct TikTokQuotesFeed: View {
 struct QuotePage: View {
     let quote: Quote
     let backgroundThemeViewModel: BackgroundThemeViewModel
+    let musicPlayerViewModel: MusicPlayerViewModel
     @State private var likeCount = Int.random(in: 100...9999)
     @State private var musicCount = Int.random(in: 50...500)
     @State private var shareCount = Int.random(in: 10...100)
@@ -83,6 +85,7 @@ struct QuotePage: View {
     @StateObject private var favoritesManager = FavoritesManager.shared
     @State private var backgroundImage: UIImage?
     @State private var showingThemeSheet = false
+    @State private var showingMusicSheet = false
 
     var body: some View {
         ZStack {
@@ -218,6 +221,25 @@ struct QuotePage: View {
                         .fontWeight(.medium)
                 }
                 
+                // Music selection button
+                VStack(spacing: 8) {
+                    Button(action: {
+                        showingMusicSheet = true
+                    }) {
+                        Image(systemName: "music.note")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(Color.black.opacity(0.3))
+                            .clipShape(Circle())
+                    }
+                    
+                    Text("Music")
+                        .font(.caption)
+                        .foregroundColor(.white)
+                        .fontWeight(.medium)
+                }
+                
                
                 
                
@@ -240,6 +262,9 @@ struct QuotePage: View {
         }
         .sheet(isPresented: $showingThemeSheet) {
             ThemeSelectionSheet(backgroundThemeViewModel: backgroundThemeViewModel)
+        }
+        .sheet(isPresented: $showingMusicSheet) {
+            MusicSelectionSheet(musicPlayer: musicPlayerViewModel)
         }
     }
 }
