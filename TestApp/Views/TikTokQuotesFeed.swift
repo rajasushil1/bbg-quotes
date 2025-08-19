@@ -27,12 +27,13 @@ struct TikTokQuotesFeed: View {
     let quotes: [Quote]
     @State private var randomizedQuotes: [Quote] = []
     @State private var usedIndices: Set<Int> = []
+    @StateObject private var backgroundThemeViewModel = BackgroundThemeViewModel()
     
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 0) {
                 ForEach(Array(randomizedQuotes.enumerated()), id: \.element.id) { index, quote in
-                    QuotePage(quote: quote)
+                    QuotePage(quote: quote, backgroundThemeViewModel: backgroundThemeViewModel)
                         .id("\(quote.id)-\(index)")
                         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
                         .onAppear {
@@ -72,6 +73,7 @@ struct TikTokQuotesFeed: View {
 
 struct QuotePage: View {
     let quote: Quote
+    let backgroundThemeViewModel: BackgroundThemeViewModel
     @State private var likeCount = Int.random(in: 100...9999)
     @State private var musicCount = Int.random(in: 50...500)
     @State private var shareCount = Int.random(in: 10...100)
@@ -79,30 +81,24 @@ struct QuotePage: View {
     @StateObject private var shareViewModel = QuoteShareViewModel()
     @StateObject private var favoritesManager = FavoritesManager.shared
     @State private var backgroundImage: UIImage?
+    @State private var showingThemeSheet = false
 
     var body: some View {
         ZStack {
             // Background Image
-            AsyncImage(url: URL(string: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=2000&fit=crop&crop=center")) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: .infinity)
-                    .clipped()
-                    .onAppear {
-                        // Convert SwiftUI image to UIImage for sharing
-                        let renderer = ImageRenderer(content: image)
-                        renderer.scale = UIScreen.main.scale
-                        backgroundImage = renderer.uiImage
-                    }
-            } placeholder: {
-                Color.black
-            }
+            Image(backgroundThemeViewModel.currentBackground)
             
-            // Dark overlay for better text readability
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
-
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: .infinity)
+            .clipped()
+            .onAppear {
+                // Convert SwiftUI image to UIImage for sharing
+                let renderer = ImageRenderer(content: Image(backgroundThemeViewModel.currentBackground))
+                renderer.scale = UIScreen.main.scale
+                backgroundImage = renderer.uiImage
+            }            
+            
             VStack(spacing: 20) {
                 if !quote.author.isEmpty {
                     Text("— \(quote.author)")
@@ -120,10 +116,25 @@ struct QuotePage: View {
 
                 Text("“\(quote.description)”")
                     .font(.title2)
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .multilineTextAlignment(.center)
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 16)
+                    .background(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 0.95, green: 0.87, blue: 0.65), // Light cream
+                                Color(red: 0.92, green: 0.78, blue: 0.55), // Warm beige
+                                Color(red: 0.88, green: 0.72, blue: 0.45), // Golden tan
+                                Color(red: 0.85, green: 0.68, blue: 0.38)  // Rich amber
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .padding(.horizontal, 24)
-                    .shadow(color: .black, radius: 3, x: 1, y: 1)
+                    .shadow(color: .black.opacity(0.3), radius: 3, x: 1, y: 1)
 
                 
                 Spacer()
@@ -187,6 +198,25 @@ struct QuotePage: View {
                         .fontWeight(.medium)
                 }
                 
+                // Theme change button
+                VStack(spacing: 8) {
+                    Button(action: {
+                        showingThemeSheet = true
+                    }) {
+                        Image(systemName: "paintbrush.fill")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .background(Color.black.opacity(0.3))
+                            .clipShape(Circle())
+                    }
+                    
+                    Text("Theme")
+                        .font(.caption)
+                        .foregroundColor(.white)
+                        .fontWeight(.medium)
+                }
+                
                
                 
                
@@ -206,6 +236,9 @@ struct QuotePage: View {
             if let error = shareViewModel.shareError {
                 Text(error)
             }
+        }
+        .sheet(isPresented: $showingThemeSheet) {
+            ThemeSelectionSheet(backgroundThemeViewModel: backgroundThemeViewModel)
         }
     }
 }
