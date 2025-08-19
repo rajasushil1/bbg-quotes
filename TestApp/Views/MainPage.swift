@@ -32,7 +32,7 @@ struct MainView: View {
                 }
             SettingsPage()
                 .tabItem {
-                    Label("Settings", systemImage: "gearshape")
+                    Label("Favorites", systemImage: "heart.fill")
                 }
                
         }
