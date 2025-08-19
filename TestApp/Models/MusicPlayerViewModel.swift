@@ -23,15 +23,15 @@ class MusicPlayerViewModel: ObservableObject {
     
     let musicOptions = [
         "None": "",
-        "Calm Ambient": "calm_ambient",
-        "Upbeat Pop": "upbeat_pop",
-        "Classical Piano": "classical_piano",
-        "Lo-fi Beats": "lofi_beats",
-        "Nature Sounds": "nature_sounds",
-        "Jazz Vibes": "jazz_vibes",
-        "Electronic Dance": "electronic_dance",
-        "Acoustic Guitar": "acoustic_guitar",
-        "Chill Hop": "chill_hop"
+        "Calm Ambient": "1",
+        "Upbeat Pop": "2",
+        "Classical Piano": "3",
+        "Lo-fi Beats": "4",
+        "Nature Sounds": "5",
+        "Jazz Vibes": "6",
+        "Electronic Dance": "7",
+        "Acoustic Guitar": "8",
+        "Chill Hop": "9"
     ]
     
     init() {
@@ -398,28 +398,3 @@ class MusicPlayerViewModel: ObservableObject {
         return currentTime / duration
     }
 }
-
-// MARK: - Music Track Model
-
-struct MusicTrack: Identifiable, Hashable {
-    let id = UUID()
-    let name: String
-    let filename: String
-    let category: String
-    let duration: TimeInterval
-    let isPremium: Bool
-    
-    static let sampleTracks = [
-        MusicTrack(name: "Calm Ambient", filename: "calm_ambient", category: "Ambient", duration: 180, isPremium: false),
-        MusicTrack(name: "Upbeat Pop", filename: "upbeat_pop", category: "Pop", duration: 210, isPremium: false),
-        MusicTrack(name: "Classical Piano", filename: "classical_piano", category: "Classical", duration: 240, isPremium: false),
-        MusicTrack(name: "Lo-fi Beats", filename: "lofi_beats", category: "Lo-fi", duration: 195, isPremium: false),
-        MusicTrack(name: "Nature Sounds", filename: "nature_sounds", category: "Nature", duration: 300, isPremium: false),
-        MusicTrack(name: "Jazz Vibes", filename: "jazz_vibes", category: "Jazz", duration: 225, isPremium: false),
-        MusicTrack(name: "Electronic Dance", filename: "electronic_dance", category: "Electronic", duration: 200, isPremium: false),
-        MusicTrack(name: "Acoustic Guitar", filename: "acoustic_guitar", category: "Acoustic", duration: 180, isPremium: false),
-        MusicTrack(name: "Chill Hop", filename: "chill_hop", category: "Hip Hop", duration: 190, isPremium: false)
-    ]
-}
-
-
