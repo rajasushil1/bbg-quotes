@@ -8,7 +8,7 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        TikTokQuotesFeed(quotes: Quote.samples)
+        Text("Hello From Content Page")
     }
 }
 

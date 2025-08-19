@@ -22,17 +22,14 @@ struct MainView: View {
         }
     var body: some View {
         TabView {
+            FeedPage()
+                .tabItem {
+                    Label("Home", systemImage: "house")
+                }
             ContentView()
                 .tabItem {
                     Label("Menu", systemImage: "list.dash")
                 }
-                
-
-            FeedPage()
-                .tabItem {
-                    Label("Order", systemImage: "square.and.pencil")
-                }
-               
             SettingsPage()
                 .tabItem {
                     Label("Settings", systemImage: "gearshape")
@@ -41,4 +38,7 @@ struct MainView: View {
         }
         .accentColor(.white)
     }
+}
+#Preview {
+    MainView()
 }
