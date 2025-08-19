@@ -47,6 +47,7 @@ struct TikTokQuotesFeed: View {
         }
         .scrollTargetLayout()
         .scrollTargetBehavior(.paging)
+        .scrollIndicators(.hidden)
         .ignoresSafeArea()
         .background(.black)
         .onAppear {
