@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 // MARK: - Model
 
@@ -70,6 +71,8 @@ struct QuotePage: View {
     @State private var musicCount = Int.random(in: 50...500)
     @State private var shareCount = Int.random(in: 10...100)
     @State private var editCount = Int.random(in: 5...50)
+    @StateObject private var shareViewModel = QuoteShareViewModel()
+    @State private var backgroundImage: UIImage?
 
     var body: some View {
         ZStack {
@@ -80,6 +83,12 @@ struct QuotePage: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(maxWidth: UIScreen.main.bounds.width, maxHeight: .infinity)
                     .clipped()
+                    .onAppear {
+                        // Convert SwiftUI image to UIImage for sharing
+                        let renderer = ImageRenderer(content: image)
+                        renderer.scale = UIScreen.main.scale
+                        backgroundImage = renderer.uiImage
+                    }
             } placeholder: {
                 Color.black
             }
@@ -151,7 +160,7 @@ struct QuotePage: View {
                 // Share button
                 VStack(spacing: 8) {
                     Button(action: {
-                        // Share action
+                        shareViewModel.captureAndShareQuote(quote: quote, backgroundImage: backgroundImage)
                     }) {
                         Image(systemName: "arrowshape.turn.up.right")
                             .font(.system(size: 24, weight: .semibold))
@@ -160,6 +169,7 @@ struct QuotePage: View {
                             .background(Color.black.opacity(0.3))
                             .clipShape(Circle())
                     }
+                    .disabled(shareViewModel.isSharing)
                     
                     Text("\(shareCount)")
                         .font(.caption)
@@ -174,6 +184,18 @@ struct QuotePage: View {
             .frame(maxWidth: UIScreen.main.bounds.width, alignment: .trailing)
             .padding(.trailing, 10)
             .padding(.bottom, 120)
+        }
+        .alert("Share Error", isPresented: Binding(
+            get: { shareViewModel.shareError != nil },
+            set: { if !$0 { shareViewModel.shareError = nil } }
+        )) {
+            Button("OK") {
+                shareViewModel.shareError = nil
+            }
+        } message: {
+            if let error = shareViewModel.shareError {
+                Text(error)
+            }
         }
     }
 }
