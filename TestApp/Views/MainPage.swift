@@ -29,7 +29,7 @@ struct MainView: View {
                 }
             ContentView()
                 .tabItem {
-                    Label("Menu", systemImage: "list.dash")
+                    Label("Gita", systemImage: "book.fill")
                 }
             SettingsPage()
                 .tabItem {

@@ -7,8 +7,10 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var slokaViewModel = SlokaViewModel()
+    
     var body: some View {
-        Text("Hello From Content Page")
+        ChapterGridView(viewModel: slokaViewModel)
     }
 }
 
