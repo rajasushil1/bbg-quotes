@@ -78,9 +78,7 @@ struct QuotePage: View {
     let backgroundThemeViewModel: BackgroundThemeViewModel
     let musicPlayerViewModel: MusicPlayerViewModel
     @State private var likeCount = Int.random(in: 100...9999)
-    @State private var musicCount = Int.random(in: 50...500)
-    @State private var shareCount = Int.random(in: 10...100)
-    @State private var editCount = Int.random(in: 5...50)
+    @State private var shareCount = Int.random(in: 1...1000)
     @StateObject private var shareViewModel = QuoteShareViewModel()
     @StateObject private var favoritesManager = FavoritesManager.shared
     @State private var backgroundImage: UIImage?
@@ -239,10 +237,6 @@ struct QuotePage: View {
                         .foregroundColor(.white)
                         .fontWeight(.medium)
                 }
-                
-               
-                
-               
             }
             .frame(maxWidth: UIScreen.main.bounds.width, alignment: .trailing)
             .padding(.trailing, 10)

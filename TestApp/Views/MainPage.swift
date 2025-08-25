@@ -22,7 +22,8 @@ struct MainView: View {
         }
     var body: some View {
         TabView {
-            FeedPage()
+//            FeedPage()
+            TestPage1()
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
