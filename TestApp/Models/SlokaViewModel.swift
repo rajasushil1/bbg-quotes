@@ -16,8 +16,8 @@ class SlokaViewModel: ObservableObject {
         
         print("🔍 Attempting to load slokas from Bundle...")
         
-        guard let url = Bundle.main.url(forResource: "slokas_nepali", withExtension: "json") else {
-            let error = "Could not find slokas_nepali.json in Bundle"
+        guard let url = Bundle.main.url(forResource: "slokas_english", withExtension: "json") else {
+            let error = "Could not find slokas_english.json in Bundle"
             print("❌ Error: \(error)")
             errorMessage = error
             isLoading = false
