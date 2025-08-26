@@ -11,9 +11,9 @@ struct MainView: View {
     init() {
             let appearance = UITabBarAppearance()
             appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = UIColor.black
-            appearance.stackedLayoutAppearance.selected.iconColor = .white
-            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.backgroundColor = UIColor.white
+            appearance.stackedLayoutAppearance.selected.iconColor = .orange
+            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.orange]
             appearance.stackedLayoutAppearance.normal.iconColor = .gray
             appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.gray]
             UITabBar.appearance().standardAppearance = appearance

@@ -102,8 +102,9 @@ struct ChapterDetailView: View {
                 }
             }
             .padding(.horizontal)
+            .padding(.vertical, 8)
         }
-        .padding(.vertical)
+        .padding(.vertical,8)
     }
     
     // MARK: - Sloka Content
@@ -119,7 +120,7 @@ struct ChapterDetailView: View {
     
     // MARK: - Sloka Text Section
     private var slokaTextSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .center, spacing: 16) {
             HStack {
                 Image(systemName: "text.quote")
                     .foregroundColor(.orange)
@@ -149,7 +150,7 @@ struct ChapterDetailView: View {
     
     // MARK: - Explanation Section
     private var explanationSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .center, spacing: 16) {
             HStack {
                 Image(systemName: "lightbulb.fill")
                     .foregroundColor(.yellow)
@@ -162,17 +163,18 @@ struct ChapterDetailView: View {
                 
                 Spacer()
             }
-            
-            Text(currentExplanation)
-                .font(.body)
-                .foregroundColor(.primary)
-                .multilineTextAlignment(.leading)
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.white)
-                        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
-                )
+            VStack{
+                Text(currentExplanation)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                    .multilineTextAlignment(.leading)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color.white)
+                            .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+                    )
+            }
         }
     }
     
