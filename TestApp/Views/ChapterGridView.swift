@@ -1,8 +1,13 @@
 import SwiftUI
+import GoogleMobileAds
 
 struct ChapterGridView: View {
     @ObservedObject var viewModel: SlokaViewModel
     @State private var selectedChapter: SlokaChapter?
+    @State private var clickCount = 0
+    @State private var nextAdThreshold = Int.random(in: 2...4)
+    @StateObject private var iapManager = IAPManager()
+    @State private var pendingChapter: SlokaChapter? // Track chapter waiting for ad dismissal
     
     private let columns = [
         GridItem(.flexible()),
@@ -45,7 +50,7 @@ struct ChapterGridView: View {
                         LazyVGrid(columns: columns, spacing: 20) {
                             ForEach(viewModel.chapters) { chapter in
                                 ChapterCardView(chapter: chapter) {
-                                    selectedChapter = chapter
+                                    handleChapterTap(chapter)
                                 }
                             }
                         }
@@ -57,6 +62,64 @@ struct ChapterGridView: View {
             .navigationBarTitleDisplayMode(.large)
             .fullScreenCover(item: $selectedChapter) { chapter in
                 ChapterDetailView(chapter: chapter)
+            }
+            .onAppear {
+                // Load initial interstitial ad
+                AdsManager.shared.loadInterstitial()
+            }
+        }
+    }
+    
+    private func handleChapterTap(_ chapter: SlokaChapter) {
+        // Increment click count
+        clickCount += 1
+        
+        // Check if it's time to show an ad
+        if clickCount >= nextAdThreshold {
+            // Store the chapter and show ad, but don't navigate yet
+            pendingChapter = chapter
+            showInterstitialAd()
+            // Reset for next random threshold
+            nextAdThreshold = Int.random(in: 2...4)
+            clickCount = 0
+        } else {
+            // No ad needed, navigate directly
+            selectedChapter = chapter
+        }
+    }
+    
+    private func showInterstitialAd() {
+        // Only show ads if user is not premium
+        guard !iapManager.purchasedSubscriptions.isEmpty == false else {
+            print("Premium user - skipping interstitial ad")
+            // If premium user, navigate directly
+            if let chapter = pendingChapter {
+                selectedChapter = chapter
+                pendingChapter = nil
+            }
+            return
+        }
+        
+        // Get the root view controller to present the interstitial
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let rootViewController = windowScene.windows.first?.rootViewController {
+            
+            // Set up the ad dismissal callback
+            AdsManager.shared.setAdDismissalCallback { [self] in
+                // This closure will be called when the ad is dismissed
+                DispatchQueue.main.async {
+                    if let chapter = self.pendingChapter {
+                        self.selectedChapter = chapter
+                        self.pendingChapter = nil
+                    }
+                }
+            }
+            
+            AdsManager.shared.showInterstitial(from: rootViewController)
+            
+            // Preload next interstitial ad
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                AdsManager.shared.loadInterstitial()
             }
         }
     }

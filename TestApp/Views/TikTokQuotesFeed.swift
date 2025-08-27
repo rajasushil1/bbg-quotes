@@ -7,6 +7,7 @@
 
 import SwiftUI
 import UIKit
+import GoogleMobileAds
 
 // MARK: - Model
 
@@ -29,32 +30,57 @@ struct TikTokQuotesFeed: View {
     @State private var usedIndices: Set<Int> = []
     @StateObject private var backgroundThemeViewModel = BackgroundThemeViewModel()
     @StateObject private var musicPlayerViewModel = MusicPlayerViewModel()
+    @StateObject private var iapManager = IAPManager()
+    @State private var scrollCount = 0
+    @State private var lastAdShownIndex = -1
     
     var body: some View {
-        ScrollView(.vertical) {
-            LazyVStack(spacing: 0) {
-                ForEach(Array(randomizedQuotes.enumerated()), id: \.element.id) { index, quote in
-                    QuotePage(quote: quote, backgroundThemeViewModel: backgroundThemeViewModel, musicPlayerViewModel: musicPlayerViewModel)
-                        .id("\(quote.id)-\(index)")
-                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-                        .onAppear {
-                            // When reaching the end, add more randomized quotes for infinite loop
-                            if index >= randomizedQuotes.count - 5 {
-                                addMoreRandomizedQuotes()
+        ZStack(alignment: .top) {
+            // Main content
+            ScrollView(.vertical) {
+                LazyVStack(spacing: 0) {
+                    ForEach(Array(randomizedQuotes.enumerated()), id: \.element.id) { index, quote in
+                        QuotePage(quote: quote, backgroundThemeViewModel: backgroundThemeViewModel, musicPlayerViewModel: musicPlayerViewModel)
+                            .id("\(quote.id)-\(index)")
+                            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                            .onAppear {
+                                // Track scroll count and show interstitial ads
+                                scrollCount += 1
+                                checkAndShowInterstitialAd(for: index)
+                                
+                                // When reaching the end, add more randomized quotes for infinite loop
+                                if index >= randomizedQuotes.count - 5 {
+                                    addMoreRandomizedQuotes()
+                                }
                             }
-                        }
+                    }
                 }
             }
-        }
-        .scrollTargetLayout()
-        .scrollTargetBehavior(.paging)
-        .scrollIndicators(.hidden)
-        .ignoresSafeArea()
-        .background(.black)
-        .onAppear {
-            if randomizedQuotes.isEmpty {
-                initializeRandomizedQuotes()
+            .scrollTargetLayout()
+            .scrollTargetBehavior(.paging)
+            .scrollIndicators(.hidden)
+            .ignoresSafeArea()
+            .background(.black)
+            .onAppear {
+                if randomizedQuotes.isEmpty {
+                    initializeRandomizedQuotes()
+                }
+                // Load initial interstitial ad only for non-premium users
+                let isPremiumUser = !iapManager.purchasedSubscriptions.isEmpty
+                if !isPremiumUser {
+                    AdsManager.shared.loadInterstitial()
+                }
             }
+            
+            // Banner Ad at the top
+            VStack {
+                SmartBannerAdView(adUnitID: AdsManager.shared.bannerAdUnitID)
+                    .frame(height: 50)
+                    .environmentObject(iapManager)
+                
+                Spacer()
+            }
+            .zIndex(1) // Ensure banner stays on top
         }
     }
     
@@ -68,6 +94,31 @@ struct TikTokQuotesFeed: View {
         // Create a completely new randomized sequence for infinite loop
         let newRandomizedQuotes = quotes.shuffled()
         randomizedQuotes.append(contentsOf: newRandomizedQuotes)
+    }
+    
+    private func checkAndShowInterstitialAd(for currentIndex: Int) {
+        // Show interstitial ad every 10 quotes, but not for the same index
+        if scrollCount % 10 == 0 && currentIndex != lastAdShownIndex {
+            lastAdShownIndex = currentIndex
+            
+            // Check if user is premium before showing ads
+            let isPremiumUser = !iapManager.purchasedSubscriptions.isEmpty
+            if isPremiumUser {
+                print("Premium user - skipping interstitial ad")
+                return
+            }
+            
+            // Get the root view controller to present the interstitial
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let rootViewController = windowScene.windows.first?.rootViewController {
+                AdsManager.shared.showInterstitial(from: rootViewController)
+                
+                // Preload next interstitial ad
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    AdsManager.shared.loadInterstitial()
+                }
+            }
+        }
     }
 }
 

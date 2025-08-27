@@ -21,6 +21,9 @@ class AdsManager: NSObject, ObservableObject, FullScreenContentDelegate {
     // Interstitial property
     private var interstitial: InterstitialAd?
     
+    // Callback for ad dismissal
+    private var onAdDismissed: (() -> Void)?
+    
     // IAP Manager for premium status - will be set externally
     private var iapManager: IAPManager?
     
@@ -32,6 +35,11 @@ class AdsManager: NSObject, ObservableObject, FullScreenContentDelegate {
     // MARK: - Set IAP Manager
     func setIAPManager(_ iapManager: IAPManager) {
         self.iapManager = iapManager
+    }
+    
+    // MARK: - Set Ad Dismissal Callback
+    func setAdDismissalCallback(_ callback: @escaping () -> Void) {
+        self.onAdDismissed = callback
     }
     
     // MARK: - Premium User Check
@@ -85,6 +93,7 @@ class AdsManager: NSObject, ObservableObject, FullScreenContentDelegate {
         print("Interstitial dismissed")
         interstitial = nil
         loadInterstitial() // Preload next ad
+        onAdDismissed?() // Notify the callback
     }
     
     // MARK: - Public Premium Status
