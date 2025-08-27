@@ -12,43 +12,37 @@ struct SettingsPage: View {
     @ObservedObject private var favoritesManager = FavoritesManager.shared
     @ObservedObject private var notificationManager = NotificationManager.shared
     @AppStorage("adsRemoved") private var adsRemoved = false
+    @State private var showSubscriptionPage: Bool = false
     
     var body: some View {
         NavigationView {
             List {
                 // Remove Ads Section
                 Section {
-                    HStack {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.red)
-                            .font(.title2)
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Remove Ads")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                            
-                            Text(adsRemoved ? "Ads are disabled" : "Remove all advertisements")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        Spacer()
-                        
-                        if adsRemoved {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.green)
+                   
+                    Button(action: {
+                        // 👉 Your button action goes here
+                       showSubscriptionPage = true
+                    }) {
+                        HStack {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.red)
                                 .font(.title2)
-                        } else {
-                            Button("Remove") {
-                                // In a real app, this would trigger in-app purchase
-                                adsRemoved = true
+                            
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Remove Ads")
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.black)
+                                
+                                Text(adsRemoved ? "Ads are disabled" : "Remove all advertisements")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
                             }
-                            .buttonStyle(.borderedProminent)
-                            .controlSize(.small)
                         }
+                        .padding(.vertical, 4)
                     }
-                    .padding(.vertical, 4)
+
                 } header: {
                     Text("Premium Features")
                 }
@@ -248,6 +242,8 @@ struct SettingsPage: View {
                         await notificationManager.requestAuthorization()
                     }
                 }
+            }.sheet(isPresented: $showSubscriptionPage) {
+               PremiumDescriptionPage()
             }
         }
     }
