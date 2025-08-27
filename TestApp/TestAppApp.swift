@@ -20,8 +20,9 @@ struct TestAppApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            MainView()
-                .environmentObject(NotificationManager.shared)
+//            MainView()
+//                .environmentObject(NotificationManager.shared)
+            AdsTestView()
         }
     }
 }

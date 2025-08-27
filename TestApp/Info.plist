@@ -4,5 +4,9 @@
 <dict>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>To send the notifications.</string>
+    <key>GADApplicationIdentifier</key>
+    <string>ca-app-pub-3940256099942544~1458002511</string>
+    <key>NSUserTrackingUsageDescription</key>
+    <string>We use your data to deliver better ads.</string>
 </dict>
 </plist>
