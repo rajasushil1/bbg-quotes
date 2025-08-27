@@ -137,38 +137,38 @@ struct SmartBannerAdView: UIViewRepresentable {
 }
 
 // MARK: - Legacy Banner Ad View (deprecated - use SmartBannerAdView instead)
-struct BannerAdView: UIViewRepresentable {
-    let adUnitID: String
-    
-    func makeUIView(context: Context) -> BannerView {
-        let banner = BannerView(adSize: AdSizeBanner)
-        banner.adUnitID = adUnitID
-        banner.rootViewController = UIApplication.shared.windows.first?.rootViewController
-        
-        // Check if user is premium before loading banner ad
-        let iapManager = IAPManager()
-        let isPremiumUser = !iapManager.purchasedSubscriptions.isEmpty
-        
-        if !isPremiumUser {
-            banner.load(Request())
-        } else {
-            // Hide the banner completely for premium users
-            banner.isHidden = true
-        }
-        
-        return banner
-    }
-    
-    func updateUIView(_ uiView: BannerView, context: Context) {
-        // Re-check premium status on updates
-        let iapManager = IAPManager()
-        let isPremiumUser = !iapManager.purchasedSubscriptions.isEmpty
-        
-        if isPremiumUser {
-            uiView.isHidden = true
-        } else {
-            uiView.isHidden = false
-        }
-    }
-}
+//struct BannerAdView: UIViewRepresentable {
+//    let adUnitID: String
+//    
+//    func makeUIView(context: Context) -> BannerView {
+//        let banner = BannerView(adSize: AdSizeBanner)
+//        banner.adUnitID = adUnitID
+//        banner.rootViewController = UIApplication.shared.windows.first?.rootViewController
+//        
+//        // Check if user is premium before loading banner ad
+//        let iapManager = IAPManager()
+//        let isPremiumUser = !iapManager.purchasedSubscriptions.isEmpty
+//        
+//        if !isPremiumUser {
+//            banner.load(Request())
+//        } else {
+//            // Hide the banner completely for premium users
+//            banner.isHidden = true
+//        }
+//        
+//        return banner
+//    }
+//    
+//    func updateUIView(_ uiView: BannerView, context: Context) {
+//        // Re-check premium status on updates
+//        let iapManager = IAPManager()
+//        let isPremiumUser = !iapManager.purchasedSubscriptions.isEmpty
+//        
+//        if isPremiumUser {
+//            uiView.isHidden = true
+//        } else {
+//            uiView.isHidden = false
+//        }
+//    }
+//}
 

@@ -4,6 +4,8 @@ struct ChapterDetailView: View {
     let chapter: SlokaChapter
     @Environment(\.dismiss) private var dismiss
     @State private var selectedSlokaIndex = 0
+    @StateObject private var adsManager = AdsManager.shared
+    @EnvironmentObject var iapManager: IAPManager
     
     // Safety check to ensure we don't access invalid indices
     private var currentSloka: String {
@@ -29,6 +31,12 @@ struct ChapterDetailView: View {
                     }
                     
                     slokaContent
+                    
+                    Spacer()
+                    
+                    // Banner Ad at the bottom
+                            SmartBannerAdView(adUnitID: adsManager.bannerAdUnitID)
+                        .frame(width: 320, height: 50).edgesIgnoringSafeArea(.bottom)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
@@ -37,6 +45,10 @@ struct ChapterDetailView: View {
                 leadingToolbarItem
                 trailingToolbarItem
             }
+        }
+        .onAppear {
+            // Set the IAPManager in AdsManager so it can check premium status
+            adsManager.setIAPManager(iapManager)
         }
     }
     
@@ -115,6 +127,7 @@ struct ChapterDetailView: View {
                 explanationSection
             }
             .padding(.horizontal)
+            .padding(.bottom,8)
         }
     }
     
