@@ -55,7 +55,7 @@ struct ChapterGridView: View {
             }
             .navigationTitle("Bhagavad Gita")
             .navigationBarTitleDisplayMode(.large)
-            .sheet(item: $selectedChapter) { chapter in
+            .fullScreenCover(item: $selectedChapter) { chapter in
                 ChapterDetailView(chapter: chapter)
             }
         }

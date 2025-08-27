@@ -138,8 +138,9 @@ struct ChapterDetailView: View {
                 .font(.body)
                 .fontWeight(.medium)
                 .foregroundColor(.primary)
-                .multilineTextAlignment(.leading)
+                .multilineTextAlignment(.center)
                 .padding()
+                .frame(width:UIScreen.main.bounds.width * 0.9)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color.white)
@@ -167,8 +168,9 @@ struct ChapterDetailView: View {
                 Text(currentExplanation)
                     .font(.body)
                     .foregroundColor(.primary)
-                    .multilineTextAlignment(.leading)
+                    .multilineTextAlignment(.center)
                     .padding()
+                    .frame(width:UIScreen.main.bounds.width * 0.9)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
                             .fill(Color.white)
