@@ -22,13 +22,13 @@ struct MainView: View {
         }
     var body: some View {
         TabView {
-//            FeedPage()
-            TestPage1()
+            FeedPage()
+//            TestPage1()
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-//            ContentView()
-            TestPage1()
+            ContentView()
+//            TestPage1()
                 .tabItem {
                     Label("Book", systemImage: "book.fill")
                 }

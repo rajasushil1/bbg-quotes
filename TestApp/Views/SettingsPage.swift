@@ -11,8 +11,13 @@ import StoreKit
 struct SettingsPage: View {
     @ObservedObject private var favoritesManager = FavoritesManager.shared
     @ObservedObject private var notificationManager = NotificationManager.shared
-    @AppStorage("adsRemoved") private var adsRemoved = false
+    @ObservedObject private var iapManager = IAPManager()
     @State private var showSubscriptionPage: Bool = false
+    
+    // Computed property to check if user is premium
+    private var isPremiumUser: Bool {
+        return !iapManager.purchasedSubscriptions.isEmpty
+    }
     
     var body: some View {
         NavigationView {
@@ -25,23 +30,24 @@ struct SettingsPage: View {
                        showSubscriptionPage = true
                     }) {
                         HStack {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.red)
+                            Image(systemName: isPremiumUser ? "checkmark.circle.fill" : "xmark.circle.fill")
+                                .foregroundColor(isPremiumUser ? .green : .red)
                                 .font(.title2)
                             
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Remove Ads")
+                                Text(isPremiumUser ? "Ads Removed" : "Remove Ads")
                                     .font(.headline)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.black)
                                 
-                                Text(adsRemoved ? "Ads are disabled" : "Remove all advertisements")
+                                Text(isPremiumUser ? "Ads are removed for you" : "Remove all advertisements")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
                         }
                         .padding(.vertical, 4)
                     }
+                    .disabled(isPremiumUser)
 
                 } header: {
                     Text("Premium Features")
