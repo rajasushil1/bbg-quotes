@@ -19,10 +19,18 @@ class NotificationManager: NSObject, ObservableObject {
     private let userDefaults = UserDefaults.standard
     private let notificationsEnabledKey = "notificationsEnabled"
     
+    private enum Identifiers {
+        static let dailyRequest = "dailyMorningNotification"
+        static let dailyCategory = "DAILY_INSPIRATION"
+        static let actionView = "VIEW_ACTION"
+        static let actionDismiss = "DISMISS_ACTION"
+    }
+    
     private override init() {
         super.init()
         loadSettings()
         checkAuthorizationStatus()
+        clearAppBadge() // Clear any existing badges on app launch
     }
     
     // MARK: - Public Methods
@@ -35,20 +43,22 @@ class NotificationManager: NSObject, ObservableObject {
             
             await MainActor.run {
                 self.isAuthorized = granted
-                if granted {
-                    self.scheduleNotificationsIfEnabled()
+                guard granted else { return }
+                let hasUserMadeChoice = self.userDefaults.object(forKey: self.notificationsEnabledKey) != nil
+                if !hasUserMadeChoice {
+                    self.setNotificationsEnabled(true)
+                    self.scheduleNotifications()
+                } else if self.notificationsEnabled {
+                    self.scheduleNotifications()
                 }
             }
         } catch {
-            await MainActor.run {
-                self.isAuthorized = false
-            }
+            await MainActor.run { self.isAuthorized = false }
         }
     }
     
     func toggleNotifications(_ enabled: Bool) {
-        notificationsEnabled = enabled
-        userDefaults.set(enabled, forKey: notificationsEnabledKey)
+        setNotificationsEnabled(enabled)
         
         if enabled {
             if isAuthorized {
@@ -61,6 +71,31 @@ class NotificationManager: NSObject, ObservableObject {
         } else {
             cancelAllNotifications()
         }
+    }
+    
+    func disableNotifications() {
+        setNotificationsEnabled(false)
+        cancelAllNotifications()
+        clearAppBadge() // Clear any existing badges
+    }
+    
+    // MARK: - Helper Methods
+    
+    /// Returns true if the user has explicitly made a choice about notifications
+    var hasUserMadeNotificationChoice: Bool {
+        return userDefaults.object(forKey: notificationsEnabledKey) != nil
+    }
+    
+    /// Resets the user's notification choice (useful for testing)
+    func resetNotificationChoice() {
+        userDefaults.removeObject(forKey: notificationsEnabledKey)
+        notificationsEnabled = false
+    }
+    
+    /// Clears the app badge count
+    func clearAppBadge() {
+        UNUserNotificationCenter.current().setBadgeCount(0)
+        UIApplication.shared.applicationIconBadgeNumber = 0
     }
     
     func scheduleNotifications() {
@@ -76,6 +111,7 @@ class NotificationManager: NSObject, ObservableObject {
     func cancelAllNotifications() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        clearAppBadge() // Clear badge when notifications are cancelled
     }
     
     // MARK: - Private Methods
@@ -93,8 +129,15 @@ class NotificationManager: NSObject, ObservableObject {
                 
                 // If notifications are enabled in settings but not authorized, disable them
                 if self.notificationsEnabled && !self.isAuthorized {
-                    self.notificationsEnabled = false
-                    self.userDefaults.set(false, forKey: self.notificationsEnabledKey)
+                    self.setNotificationsEnabled(false)
+                }
+                
+                // Only auto-enable notifications if user has never made a choice (first time)
+                // Check if the key exists in UserDefaults to determine if user has made a choice
+                let hasUserMadeChoice = self.userDefaults.object(forKey: self.notificationsEnabledKey) != nil
+                if self.isAuthorized && !self.notificationsEnabled && !hasUserMadeChoice {
+                    // First time user - enable notifications by default
+                    self.setNotificationsEnabled(true)
                 }
                 
                 // If authorized and enabled, schedule notifications
@@ -117,14 +160,14 @@ class NotificationManager: NSObject, ObservableObject {
         content.subtitle = "Start your day with wisdom"
         content.body = getRandomNotificationMessage()
         content.sound = .default
-        content.badge = 1
-        content.categoryIdentifier = "DAILY_INSPIRATION"
+        // Removed badge to prevent persistent app icon badge
+        content.categoryIdentifier = Identifiers.dailyCategory
         
         // Create notification trigger for daily at random time between 6:30 AM - 7:30 AM
         let trigger = createDailyNotificationTrigger()
         
         let request = UNNotificationRequest(
-            identifier: "dailyMorningNotification",
+            identifier: Identifiers.dailyRequest,
             content: content,
             trigger: trigger
         )
@@ -231,33 +274,10 @@ class NotificationManager: NSObject, ObservableObject {
         }
     }
     
-    // MARK: - Testing Methods (for development)
-    
-    // func sendTestNotification() {
-    //     guard isAuthorized else { return }
-        
-    //     let content = UNMutableNotificationContent()
-    //     content.title = "Test Notification"
-    //     content.subtitle = "This is a test"
-    //     content.body = "This is a test notification from your app"
-    //     content.sound = .default
-    //     content.badge = 1
-        
-    //     // show this notification five seconds from now
-    //     let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-        
-    //     // choose a random identifier
-    //     let request = UNNotificationRequest(
-    //         identifier: UUID().uuidString, 
-    //         content: content, 
-    //         trigger: trigger
-    //     )
-        
-    //     // add our notification request
-    //     UNUserNotificationCenter.current().add(request) { error in
-    //         // Handle any errors silently in production
-    //     }
-    // }
+    private func setNotificationsEnabled(_ enabled: Bool) {
+        notificationsEnabled = enabled
+        userDefaults.set(enabled, forKey: notificationsEnabledKey)
+    }
 }
 
 // MARK: - Notification Delegate
@@ -268,8 +288,8 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         willPresent notification: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        // Show notification even when app is in foreground
-        completionHandler([.banner, .sound, .badge])
+        // Show notification even when app is in foreground, but don't show badge
+        completionHandler([.banner, .sound])
     }
     
     func userNotificationCenter(
@@ -277,12 +297,15 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
+        // Clear badge when notification is tapped
+        clearAppBadge()
+        
         // Handle notification tap
         switch response.actionIdentifier {
-        case "VIEW_ACTION":
+        case Identifiers.actionView:
             // Navigate to main content
             break
-        case "DISMISS_ACTION":
+        case Identifiers.actionDismiss:
             // Dismiss notification
             break
         default:
@@ -292,6 +315,14 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
         
         completionHandler()
     }
+    
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive notification: UNNotification
+    ) {
+        // Clear badge when notification is delivered
+        clearAppBadge()
+    }
 }
 
 // MARK: - Notification Categories
@@ -299,19 +330,19 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
 extension NotificationManager {
     func setupNotificationCategories() {
         let viewAction = UNNotificationAction(
-            identifier: "VIEW_ACTION",
+            identifier: Identifiers.actionView,
             title: "View",
             options: .foreground
         )
         
         let dismissAction = UNNotificationAction(
-            identifier: "DISMISS_ACTION",
+            identifier: Identifiers.actionDismiss,
             title: "Dismiss",
             options: .destructive
         )
         
         let category = UNNotificationCategory(
-            identifier: "DAILY_INSPIRATION",
+            identifier: Identifiers.dailyCategory,
             actions: [viewAction, dismissAction],
             intentIdentifiers: [],
             options: .customDismissAction

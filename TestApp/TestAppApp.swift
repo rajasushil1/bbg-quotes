@@ -10,20 +10,18 @@ import UserNotifications
 
 @main
 struct TestAppApp: App {
-    @StateObject private var notificationManager = NotificationManager.shared
     
     init() {
         // Set up notification delegate
-        UNUserNotificationCenter.current().delegate = notificationManager
+        UNUserNotificationCenter.current().delegate = NotificationManager.shared
         
         // Set up notification categories
-        notificationManager.setupNotificationCategories()
+        NotificationManager.shared.setupNotificationCategories()
     }
-    
     var body: some Scene {
         WindowGroup {
             MainView()
-                .environmentObject(notificationManager)
+                .environmentObject(NotificationManager.shared)
         }
     }
 }

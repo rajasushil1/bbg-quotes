@@ -80,7 +80,7 @@ struct QuotePage: View {
     @State private var likeCount = Int.random(in: 100...9999)
     @State private var shareCount = Int.random(in: 1...1000)
     @StateObject private var shareViewModel = QuoteShareViewModel()
-    @StateObject private var favoritesManager = FavoritesManager.shared
+    @ObservedObject private var favoritesManager = FavoritesManager.shared
     @State private var backgroundImage: UIImage?
     @State private var showingThemeSheet = false
     @State private var showingMusicSheet = false

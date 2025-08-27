@@ -9,8 +9,8 @@ import SwiftUI
 import StoreKit
 
 struct SettingsPage: View {
-    @StateObject private var favoritesManager = FavoritesManager.shared
-    @StateObject private var notificationManager = NotificationManager.shared
+    @ObservedObject private var favoritesManager = FavoritesManager.shared
+    @ObservedObject private var notificationManager = NotificationManager.shared
     @AppStorage("adsRemoved") private var adsRemoved = false
     
     var body: some View {
@@ -279,7 +279,7 @@ struct SettingsPage: View {
 // MARK: - Favorites View
 
 struct FavoritesView: View {
-    @StateObject private var favoritesManager = FavoritesManager.shared
+    @ObservedObject private var favoritesManager = FavoritesManager.shared
     
     var body: some View {
         VStack {
