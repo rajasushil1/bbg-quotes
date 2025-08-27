@@ -112,10 +112,6 @@ struct SettingsPage: View {
                             }
                             
                             Spacer()
-                            
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.secondary)
-                                .font(.caption)
                         }
                         .padding(.vertical, 4)
                     }
@@ -282,6 +278,7 @@ struct SettingsPage: View {
 
 struct FavoritesView: View {
     @ObservedObject private var favoritesManager = FavoritesManager.shared
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack {
@@ -328,7 +325,24 @@ struct FavoritesView: View {
             }
         }
         .navigationTitle("Favourite Quotes")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.automatic)
+        .accentColor(.black)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                        Text("Back")
+                            .font(.system(size: 16, weight: .medium))
+                    }
+                    .foregroundColor(.black)
+                }
+            }
+        }
     }
     
     private func deleteFavorites(offsets: IndexSet) {
