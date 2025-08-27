@@ -52,7 +52,7 @@ struct ChapterDetailView: View {
     
     // MARK: - Chapter Header
     private var chapterHeader: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 12) {
             ZStack {
                 Circle()
                     .fill(LinearGradient(
@@ -60,17 +60,17 @@ struct ChapterDetailView: View {
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ))
-                    .frame(width: 80, height: 80)
+                    .frame(width: 60, height: 60)
                 
                 Text("\(chapter.id)")
-                    .font(.title)
+                    .font(.title2)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
             }
             
             VStack(spacing: 8) {
                 Text(chapter.chapterTitle)
-                    .font(.title2)
+                    .font(.title3)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                 
@@ -86,7 +86,7 @@ struct ChapterDetailView: View {
                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
         )
         .padding(.horizontal)
-        .padding(.top)
+        .padding(.top, -30)
     }
     
     // MARK: - Sloka Selector
@@ -110,11 +110,11 @@ struct ChapterDetailView: View {
     // MARK: - Sloka Content
     private var slokaContent: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: 12) {
                 slokaTextSection
                 explanationSection
             }
-            .padding()
+            .padding(.horizontal)
         }
     }
     
