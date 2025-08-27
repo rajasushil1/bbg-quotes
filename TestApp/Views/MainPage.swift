@@ -27,13 +27,14 @@ struct MainView: View {
                 .tabItem {
                     Label("Home", systemImage: "house")
                 }
-            ContentView()
+//            ContentView()
+            TestPage1()
                 .tabItem {
-                    Label("Gita", systemImage: "book.fill")
+                    Label("Book", systemImage: "book.fill")
                 }
             SettingsPage()
                 .tabItem {
-                    Label("Favorites", systemImage: "heart.fill")
+                    Label("Settings", systemImage: "gearshape")
                 }
                
         }
