@@ -9,27 +9,43 @@ import UIKit
 
 struct MainView: View {
     init() {
-            let appearance = UITabBarAppearance()
-            appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white
-            appearance.stackedLayoutAppearance.selected.iconColor = .orange
-            appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.orange]
-            appearance.stackedLayoutAppearance.normal.iconColor = .gray
-            appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.gray]
-            UITabBar.appearance().standardAppearance = appearance
-            UITabBar.appearance().scrollEdgeAppearance = appearance
-           
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        
+        // Set a light background color for better contrast
+        appearance.backgroundColor = UIColor.systemBackground
+        
+        // Configure selected tab appearance with better contrast
+        appearance.stackedLayoutAppearance.selected.iconColor = .orange
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .foregroundColor: UIColor.orange,
+            .font: UIFont.systemFont(ofSize: 12, weight: .medium)
+        ]
+        
+        // Configure normal tab appearance
+        appearance.stackedLayoutAppearance.normal.iconColor = .systemGray
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .foregroundColor: UIColor.systemGray,
+            .font: UIFont.systemFont(ofSize: 12, weight: .regular)
+        ]
+        
+        // Apply the appearance to both standard and scroll edge
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+        
+        // Ensure proper contrast on iPad
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            UITabBar.appearance().backgroundColor = UIColor.systemBackground
         }
+    }
+    
     var body: some View {
         TabView {
             FeedPage()
-//            TestPage1()
                 .tabItem {
                     Label("Home", systemImage: "house")
-                    
                 }
             ContentView()
-//            TestPage1()
                 .tabItem {
                     Label("Book", systemImage: "book.fill")
                 }
@@ -37,11 +53,11 @@ struct MainView: View {
                 .tabItem {
                     Label("Settings", systemImage: "gearshape")
                 }
-               
         }
-        .accentColor(.white)
+        // Remove the conflicting accentColor modifier
     }
 }
+
 #Preview {
     MainView()
 }
