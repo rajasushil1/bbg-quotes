@@ -6,6 +6,7 @@
 //
 import SwiftUI
 import UIKit
+import AppTrackingTransparency
 
 struct MainView: View {
     init() {
@@ -54,7 +55,24 @@ struct MainView: View {
                     Label("Settings", systemImage: "gearshape")
                 }
         }
+        .onAppear {
+            requestTrackingAuthorizationIfNeeded()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            requestTrackingAuthorizationIfNeeded()
+        }
         // Remove the conflicting accentColor modifier
+    }
+}
+
+private func requestTrackingAuthorizationIfNeeded() {
+    if #available(iOS 14, *) {
+        let status = ATTrackingManager.trackingAuthorizationStatus
+        if status == .notDetermined {
+            DispatchQueue.main.async {
+                ATTrackingManager.requestTrackingAuthorization { _ in }
+            }
+        }
     }
 }
 

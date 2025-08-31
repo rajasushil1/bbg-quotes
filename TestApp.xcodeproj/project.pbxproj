@@ -282,7 +282,7 @@
 				INFOPLIST_FILE = TestApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Geeta & Quotes";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use your data to deliver better ads.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier is used to deliver more relevant ads and support our free content. We do not sell your data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -318,7 +318,7 @@
 				INFOPLIST_FILE = TestApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Geeta & Quotes";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use your data to deliver better ads.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier is used to deliver more relevant ads and support our free content. We do not sell your data.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
