@@ -278,7 +278,7 @@ struct PremiumDescriptionPage: View {
                 HStack(spacing: 0) {
                    
                     
-                    NavigationLink(destination: WebView(urlString: "http://www.asushil.com.np/terms-condition/")) {
+                    NavigationLink(destination: WebView(urlString: "https://appsved.com/terms-of-use")) {
                         Text("Terms of Service")
                             .font(.caption)
                             .foregroundColor(.orange)
@@ -289,7 +289,7 @@ struct PremiumDescriptionPage: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
-                    NavigationLink(destination: WebView(urlString: "https://www.asushil.com.np/privacy-policy/")) {
+                    NavigationLink(destination: WebView(urlString: "https://appsved.com/privacy-policy")) {
                         Text("Privacy Policy.")
                             .font(.caption)
                             .foregroundColor(.orange)

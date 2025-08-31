@@ -14,9 +14,9 @@ class AdsManager: NSObject, ObservableObject, FullScreenContentDelegate {
     static let shared = AdsManager()  // Singleton
     
     // MARK: - AdMob IDs
-    let appID = "ca-app-pub-3940256099942544~1458002511" // Test App ID
-    let bannerAdUnitID = "ca-app-pub-3940256099942544/2934735716" // Test Banner
-    let interstitialAdUnitID = "ca-app-pub-3940256099942544/4411468910" // Test Interstitial
+    let appID = "ca-app-pub-6639002489029252~5358741990" // Test App ID
+    let bannerAdUnitID = "ca-app-pub-6639002489029252/8021398505" // Test Banner
+    let interstitialAdUnitID = "ca-app-pub-6639002489029252/7383104252" // Test Interstitial
     
     // Interstitial property
     private var interstitial: InterstitialAd?

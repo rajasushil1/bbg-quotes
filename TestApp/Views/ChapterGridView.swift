@@ -67,7 +67,7 @@ struct ChapterGridView: View {
                 // Load initial interstitial ad
                 AdsManager.shared.loadInterstitial()
             }
-        }
+        }.navigationViewStyle(StackNavigationViewStyle())
     }
     
     private func handleChapterTap(_ chapter: SlokaChapter) {

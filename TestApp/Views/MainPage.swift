@@ -26,6 +26,7 @@ struct MainView: View {
 //            TestPage1()
                 .tabItem {
                     Label("Home", systemImage: "house")
+                    
                 }
             ContentView()
 //            TestPage1()

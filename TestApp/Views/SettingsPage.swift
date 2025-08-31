@@ -247,21 +247,21 @@ struct SettingsPage: View {
             }.sheet(isPresented: $showSubscriptionPage) {
                PremiumDescriptionPage()
             }
-        }
+        }.navigationViewStyle(StackNavigationViewStyle())
     }
     
     // MARK: - Actions
     
     private func contactUs() {
         // In a real app, this would open email or contact form
-        if let url = URL(string: "mailto:support@testapp.com") {
+        if let url = URL(string: "https://appsved.com/contact-us") {
             UIApplication.shared.open(url)
         }
     }
     
     private func showPrivacyPolicy() {
         // In a real app, this would show privacy policy
-        if let url = URL(string: "https://testapp.com/privacy") {
+        if let url = URL(string: "https://appsved.com/privacy-policy") {
             UIApplication.shared.open(url)
         }
     }
