@@ -244,7 +244,7 @@ struct SettingsPage: View {
                         await notificationManager.requestAuthorization()
                     }
                 }
-            }.sheet(isPresented: $showSubscriptionPage) {
+            }.fullScreenCover(isPresented: $showSubscriptionPage) {
                PremiumDescriptionPage()
             }
         }.navigationViewStyle(StackNavigationViewStyle())

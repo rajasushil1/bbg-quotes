@@ -45,7 +45,7 @@ struct ChapterDetailView: View {
                 leadingToolbarItem
                 trailingToolbarItem
             }
-        }
+        }.navigationViewStyle(StackNavigationViewStyle())
         .onAppear {
             // Set the IAPManager in AdsManager so it can check premium status
             adsManager.setIAPManager(iapManager)

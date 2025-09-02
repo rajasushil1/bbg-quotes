@@ -31,14 +31,28 @@ struct PremiumDescriptionPage: View {
                 
               
                     VStack(spacing: 30) {
-                        // Header section
-                        headerSection
                         
-                        // Subscription options
-                        subscriptionOptionsSection
-                        
-                        // Continue button
-                        continueButtonSection
+                        if UIDevice.current.userInterfaceIdiom == .phone {
+                            headerSection
+                          
+                            
+                            // Subscription options
+                            subscriptionOptionsSection
+                            
+                            // Continue button
+                            continueButtonSection
+                        }
+                        else{
+                            // Header section
+                            headerSection
+                            Spacer()
+                            
+                            // Subscription options
+                            subscriptionOptionsSection
+                            Spacer()
+                            // Continue button
+                            continueButtonSection
+                        }
                         
 
                     }
@@ -51,7 +65,7 @@ struct PremiumDescriptionPage: View {
                 HeaderForAll(titleText: "")
             }
             .navigationBarHidden(true)
-        }
+        }.navigationViewStyle(StackNavigationViewStyle())
     }
     
     // MARK: - Header Section
